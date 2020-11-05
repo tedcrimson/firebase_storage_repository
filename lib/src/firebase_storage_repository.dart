@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -12,35 +13,42 @@ class FirebaseStorageRepository extends CRUDRepository {
 
   final FirebaseStorage _storage;
 
-  StorageReference get ref => _storage.ref();
+  Reference get ref => _storage.ref();
 
-  Future<String> getDownloadUrl(List fields) {
+  void checkFields(List fields) {
     if (fields.contains(null)) throw FirebaseStorageNullArgumentException();
     if (fields.length % 2 != 0) throw FirebaseStorageArgumentException();
+  }
+
+  Future<String> getDownloadUrl(List fields) {
+    checkFields(fields);
     return read(fields.join('/'));
   }
 
   Future<Uint8List> getByteData(List fields, [int maxSize]) {
-    if (fields.contains(null)) throw FirebaseStorageNullArgumentException();
-    if (fields.length % 2 != 0) throw FirebaseStorageArgumentException();
-    return ref.child(fields.join('/')).getData(maxSize ?? 100 * 100 * 100);
+    checkFields(fields);
+    return ref.child(fields.join('/')).getData(maxSize);
   }
 
-  Future<StorageTaskSnapshot> uploadByteData(List fields, Uint8List data) {
-    if (fields.contains(null)) throw FirebaseStorageNullArgumentException();
-    if (fields.length % 2 != 0) throw FirebaseStorageArgumentException();
+  UploadTask uploadByteData(List fields, Uint8List data) {
+    checkFields(fields);
     return create(fields.join('/'), data);
   }
 
-  Future<StorageTaskSnapshot> uploadFile(List fields, File file) {
-    if (fields.contains(null)) throw FirebaseStorageNullArgumentException();
-    if (fields.length % 2 != 0) throw FirebaseStorageArgumentException();
-    return ref.child(fields.join('/')).putFile(file).onComplete;
+  UploadTask uploadFile(List fields, File file) {
+    checkFields(fields);
+    return ref.child(fields.join('/')).putFile(file);
+  }
+
+  UploadTask uploadBlob(List fields, dynamic blob,
+      [SettableMetadata metadata]) {
+    checkFields(fields);
+    return ref.child(fields.join('/')).putBlob(blob, metadata);
   }
 
   @override
-  Future<StorageTaskSnapshot> create(String path, dynamic data) {
-    return ref.child(path).putData(data).onComplete;
+  UploadTask create(String path, dynamic data, [FutureOr Function() action]) {
+    return ref.child(path).putData(data).whenComplete(action);
   }
 
   @override
