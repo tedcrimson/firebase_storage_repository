@@ -1,6 +1,6 @@
 name: firebase_storage_repository
 description: A new Flutter package project.
-version: 0.0.2+1
+version: 0.0.2+3
 
 homepage: https://github.com/tedcrimson/firebase_storage_repository
 
@@ -11,5 +11,5 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^0.5.1
-  firebase_storage: ^5.0.0
+  firebase_core: ^0.7.0
+  firebase_storage: ^7.0.0
