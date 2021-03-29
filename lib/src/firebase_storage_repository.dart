@@ -40,7 +40,8 @@ class FirebaseStorageRepository extends CRUDRepository {
     return ref.child(fields.join('/')).putFile(file);
   }
 
-  UploadTask uploadBlob(List fields, dynamic blob, [SettableMetadata metadata]) {
+  UploadTask uploadBlob(List fields, dynamic blob,
+      [SettableMetadata metadata]) {
     // checkFields(fields);
     return ref.child(fields.join('/')).putBlob(blob, metadata);
   }
